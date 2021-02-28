@@ -1,7 +1,6 @@
 import json
 import logging
 import subprocess
-import time
 import os
 
 import urllib.request
@@ -60,8 +59,6 @@ def create_device_label(tag):
         d.text((10, 70), "Device Tag ID:", font=big_fnt, fill=(0, 0, 0))
         d.text((10, 105), "000" + tag, font=big_fnt, fill=(0, 0, 0))
 
-        d.text((10, 140), "This device has to stay in your property",font=small_fnt, fill=(0, 0, 0))
-        d.text((10, 165), "or donations will stop", font=small_fnt, fill=(0, 0, 0))
 
         im_qr = Image.open('img/qr.png')
         im_logo = Image.open('logo.png')
@@ -180,8 +177,6 @@ def print_label(img_file, conf: dict):
 
 
 if __name__ == '__main__':
-    os_info = os.name
-    print(os_info)
     logging.basicConfig(
         format="%(asctime)s: %(message)s",
         # filemode='a',
@@ -194,7 +189,7 @@ if __name__ == '__main__':
         conf = json.load(f)
     for conf_elem in conf:
         logging.info(str(conf_elem) + ": " + str(conf[conf_elem]))
-
+    logging.info("current OS: " + os.name)
     # Read Tags
     with open('tags.txt', 'r') as f:
         labdoo_tags = f.readlines()
