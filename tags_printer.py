@@ -2,6 +2,7 @@ import json
 import logging
 import subprocess
 import time
+import os
 
 import urllib.request
 from urllib.request import urlopen
@@ -12,12 +13,12 @@ from PIL import Image, ImageDraw, ImageFont
 
 def read_battery_capacity(tag):
     try:
-        url = 'https://www.labdoo.org/content/tag-one-dooject?id=0000'+tag
+        url = 'https://www.labdoo.org/content/tag-one-dooject?id=0000' + tag
         html = urlopen(url)
         html_soup = BeautifulSoup(html, 'html.parser')
 
         bat_cap = str(html_soup)[str(html_soup).find(
-            'watt-hours:')+16:str(html_soup).find("watt-hours:")+20]
+            'watt-hours:') + 16:str(html_soup).find("watt-hours:") + 20]
 
         if bat_cap == "Not ":
             bat_cap = "Not Available"
@@ -34,9 +35,9 @@ def read_battery_capacity(tag):
 def read_save_qr_code(tag):
     try:
         qr_add = "https://api.qrserver.com/v1/create-qr-code/?"
-        qr_add = qr_add+"size=180x180&data=http%3A%2F%2Fwww.labdoo.org%2Flaptop%2F0000"
+        qr_add = qr_add + "size=180x180&data=http%3A%2F%2Fwww.labdoo.org%2Flaptop%2F0000"
         urllib.request.urlretrieve(
-            qr_add+tag, "img/qr.png")
+            qr_add + tag, "img/qr.png")
     except Exception as e:
         logging.error("Error Reading QR Code")
         logging.error(e)
@@ -48,17 +49,19 @@ def create_device_label(tag):
 
         img = Image.new('RGB', (554, 200), color=(255, 255, 255))
 
-        fnt = ImageFont.truetype(
-            '/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 30)
-        d = ImageDraw.Draw(img)
-        d.text((10, 70), "Device Tag ID:", font=fnt, fill=(0, 0, 0))
-        d.text((10, 105), "000"+tag, font=fnt, fill=(0, 0, 0))
+        if os.name == "nt":  # get windows font
+            big_fnt = ImageFont.truetype('arial.ttf', 30)
+            small_fnt = ImageFont.truetype('arial.ttf', 14)
+        else:  # get linux font (likely ubuntu here, may not work for other OS)
+            big_fnt = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 30)
+            small_fnt = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 14)
 
-        fnt = ImageFont.truetype(
-            '/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 14)
-        d.text((10, 140), "This device has to stay at your property",
-               font=fnt, fill=(0, 0, 0))
-        d.text((10, 165), "or donations will stop", font=fnt, fill=(0, 0, 0))
+        d = ImageDraw.Draw(img)
+        d.text((10, 70), "Device Tag ID:", font=big_fnt, fill=(0, 0, 0))
+        d.text((10, 105), "000" + tag, font=big_fnt, fill=(0, 0, 0))
+
+        d.text((10, 140), "This device has to stay in your property",font=small_fnt, fill=(0, 0, 0))
+        d.text((10, 165), "or donations will stop", font=small_fnt, fill=(0, 0, 0))
 
         im_qr = Image.open('img/qr.png')
         im_logo = Image.open('logo.png')
@@ -68,21 +71,23 @@ def create_device_label(tag):
 
         return filename
     except Exception as e:
-        logging.error("Error Reading Creating Label")
+        logging.error("Error Creating Label")
         logging.error(e)
         return ""
 
-
-def create_power_adaptor_label(tag):
+def create_power_adapter_label(tag):
     try:
         filename = "img/power_tag.png"
         img = Image.new('RGB', (554, 200), color=(255, 255, 255))
 
-        fnt = ImageFont.truetype(
-            '/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 30)
+        if os.name == "nt":  # get windows font
+            big_fnt = ImageFont.truetype('arial.ttf', 30)
+        else:  # get linux font (likely ubuntu here, may not work for other OS)
+            big_fnt = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 30)
+
         d = ImageDraw.Draw(img)
-        d.text((10, 70), "Power Adap.Tag ID:", font=fnt, fill=(0, 0, 0))
-        d.text((10, 105), "000"+tag, font=fnt, fill=(0, 0, 0))
+        d.text((10, 70), "Power Adap.Tag ID:", font=big_fnt, fill=(0, 0, 0))
+        d.text((10, 105), "000" + tag, font=big_fnt, fill=(0, 0, 0))
 
         im_qr = Image.open('img/qr.png')
         im_logo = Image.open('logo.png')
@@ -92,7 +97,7 @@ def create_power_adaptor_label(tag):
 
         return filename
     except Exception as e:
-        logging.error("Error Reading Creating Label")
+        logging.error("Error Creating Label")
         logging.error(e)
         return ""
 
@@ -102,16 +107,19 @@ def create_battery_label(tag, bat_cap):
         filename = "img/battery_tag.png"
         img = Image.new('RGB', (554, 200), color=(255, 255, 255))
 
-        fnt = ImageFont.truetype(
-            '/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 30)
-        d = ImageDraw.Draw(img)
-        d.text((10, 70), "Battery Comp. ID:", font=fnt, fill=(0, 0, 0))
-        d.text((10, 105), "000"+tag, font=fnt, fill=(0, 0, 0))
+        if os.name == "nt":  # get windows font
+            big_fnt = ImageFont.truetype('arial.ttf', 30)
+            small_fnt = ImageFont.truetype('arial.ttf', 20)
+        else:  # get linux font (likely ubuntu here, may not work for other OS)
+            big_fnt = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 30)
+            small_fnt = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 20)
 
-        fnt = ImageFont.truetype(
-            '/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 20)
-        d.text((10, 140), "Battery Watt-Hours", font=fnt, fill=(0, 0, 0))
-        d.text((10, 165), bat_cap, font=fnt, fill=(0, 0, 0))
+        d = ImageDraw.Draw(img)
+        d.text((10, 70), "Battery Comp. ID:", font=big_fnt, fill=(0, 0, 0))
+        d.text((10, 105), "000" + tag, font=big_fnt, fill=(0, 0, 0))
+
+        d.text((10, 140), "Battery Watt-Hours", font=small_fnt, fill=(0, 0, 0))
+        d.text((10, 165), bat_cap, font=small_fnt, fill=(0, 0, 0))
 
         im_qr = Image.open('img/qr.png')
         im_logo = Image.open('logo.png')
@@ -121,46 +129,59 @@ def create_battery_label(tag, bat_cap):
 
         return filename
     except Exception as e:
-        logging.error("Error Reading Creating Label")
+        logging.error("Error Creating Label")
         logging.error(e)
         return ""
 
 
-def save_tag_images(tag):
+def create_images(tag: str, conf: dict):
     """
     Function to look in labdoo.org for a tag and
     create the images of the labels
     """
     read_save_qr_code(tag)
-    bat_cap = read_battery_capacity(tag)
 
-    device_img = create_device_label(tag)
-    power_adaptor_img = create_power_adaptor_label(tag)
-    battery_img = create_battery_label(tag, bat_cap)
+    img_files = []
+    if conf['print_device_tag']:
+        device_img = create_device_label(tag)
+        img_files.append(device_img)
 
-    img_files = [device_img, power_adaptor_img, battery_img]
+    if conf['print_power_adapter']:
+        power_adapter_img = create_power_adapter_label(tag)
+        img_files.append(power_adapter_img)
+
+    if conf['print_battery_comp']:
+        bat_cap = read_battery_capacity(tag)
+        battery_img = create_battery_label(tag, bat_cap)
+        img_files.append(battery_img)
 
     return img_files
 
 
-def print_label(img_file, model, printer):
-    """
-    Given a image file print the label
-    """
-    bashCommand = "brother_ql -m "+model+" -p "+printer+" print -l 50 "+img_file
-    process = subprocess.Popen(
-        bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, error = process.communicate()
+def print_label(img_file, conf: dict):
+    """Given a image file print the label"""
 
-    logging.info(output.decode('utf-8'))
-    logging.error(error.decode('utf-8'))
+    model = conf['model']
+    printer = conf['printer']
+    brother_ql_cmd= conf['brother_ql_cmd']
+    abs_img_path = os.path.abspath(img_file)
+    # working command:
+    # brother_ql -m QL-500 -p usb://0x04f9:0x2015 print -l 29 C:\Users\the_b\labdoo_print\brother_ql_labdoo_tags_printer\img\device_tag.png -r 90
 
-    #input("Press any key to continue next image")
-    time.sleep(5)
+    bash_command = brother_ql_cmd + " -m " + model + " -p " + printer + " print -l 29 " + abs_img_path + " -r 90"
+    logging.info(bash_command)
+
+    subprocess.run(bash_command,  shell=True)
+
+    #logging.info("stdout: " + output.decode('utf-8'))
+    #logging.error("stderr: " + error.decode('utf-8'))
+
+    input("Press any key to continue next image")
 
 
 if __name__ == '__main__':
-
+    os_info = os.name
+    print(os_info)
     logging.basicConfig(
         format="%(asctime)s: %(message)s",
         # filemode='a',
@@ -170,25 +191,27 @@ if __name__ == '__main__':
 
     # Read Printer Configuration File
     with open('config.json', 'r') as f:
-        printer_config = json.load(f)
-
-    logging.info(printer_config['printer'])
-    logging.info(printer_config['model'])
+        conf = json.load(f)
+    for conf_elem in conf:
+        logging.info(str(conf_elem) + ": " + str(conf[conf_elem]))
 
     # Read Tags
-    labdoo_tags = []
     with open('tags.txt', 'r') as f:
         labdoo_tags = f.readlines()
 
-    for tag in labdoo_tags:
+    for curr_tag in labdoo_tags:
+        try:
 
-        # Read the website tag and create images
-        img_files = save_tag_images(tag)
+            # Read the website tag and create images
+            img_files = create_images(curr_tag, conf)
 
-        if not img_files:
-            continue
+            if not img_files:
+                continue
 
-        # Print the Labels
-        for img in img_files:
-            print_label(img, printer_config['model'],
-                        printer_config['printer'])
+            # Print the Labels
+            for img in img_files:
+                print_label(img, conf)
+        except Exception as exc:
+            logging.error("tag " + curr_tag + " could not be printed:")
+            logging.error(exc)
+    logging.info("print job finished")

@@ -1,4 +1,8 @@
 {
-    "printer": "/dev/usb/lp0",
-    "model": "QL-500"
+    "brother_ql_cmd" : "D:\\bin\\brother_ql",
+    "printer": "usb://0x04f9:0x2015",
+    "model": "QL-500",
+    "print_device_tag" : true,
+    "print_power_adapter" : false,
+    "print_battery_comp" : false
 }
