@@ -1,6 +1,7 @@
-.vscode
+.vscode/
+.idea/
 __pycache__
-img
+env/
+
 *.csv
 *.log
-env/
