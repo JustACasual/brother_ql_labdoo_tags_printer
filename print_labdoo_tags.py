@@ -34,7 +34,7 @@ def read_battery_capacity(tag):
 def read_save_qr_code(tag):
     try:
         qr_add = "https://api.qrserver.com/v1/create-qr-code/?"
-        qr_add = qr_add + "size=180x180&data=http%3A%2F%2Fwww.labdoo.org%2Flaptop%2F0000"
+        qr_add = qr_add + "size=180x180&data=http%3A%2F%2Fplatform.labdoo.org%2Flaptop%2F0000"
         urllib.request.urlretrieve(
             qr_add + tag, "img/qr.png")
     except Exception as e:
