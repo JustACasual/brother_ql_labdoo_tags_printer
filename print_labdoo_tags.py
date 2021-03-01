@@ -170,10 +170,8 @@ def print_label(img_file, conf: dict):
 
     subprocess.run(bash_command,  shell=True)
 
-    #logging.info("stdout: " + output.decode('utf-8'))
-    #logging.error("stderr: " + error.decode('utf-8'))
-
-    input("Press any key to continue next image")
+    print("")
+    input("Press Enter key to continue next image")
 
 
 if __name__ == '__main__':
