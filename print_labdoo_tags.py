@@ -35,8 +35,9 @@ def read_save_qr_code(tag):
     try:
         qr_add = "https://api.qrserver.com/v1/create-qr-code/?"
         qr_add = qr_add + "size=180x180&data=http%3A%2F%2Fplatform.labdoo.org%2Fcontent%2F"
+        parsed_tag = str(int(tag)).zfill(9)
         urllib.request.urlretrieve(
-            qr_add + tag, "img/qr.png")
+            qr_add + parsed_tag, "img/qr.png")
     except Exception as e:
         logging.error("Error Reading QR Code")
         logging.error(e)
