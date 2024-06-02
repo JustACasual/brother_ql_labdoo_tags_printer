@@ -1,5 +1,5 @@
 {
-    "brother_ql_cmd" : "D:\\bin\\brother_ql",
+    "brother_ql_cmd" : "brother_ql --debug",
     "printer": "usb://0x04f9:0x2015",
     "model": "QL-500",
     "print_device_tag" : true,
