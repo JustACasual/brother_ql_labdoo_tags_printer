@@ -1,3 +1,6 @@
+# HINT FOR MYSELF
+If not working, run "Filter Wizard" (lib-win32 filter installer), remove all filters and install fresh.
+
 # Brother QL Labdoo Tags Printer
 
 When preparing a project with several dootronics labels are always some work.
