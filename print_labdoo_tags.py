@@ -8,6 +8,7 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
 from PIL import Image, ImageDraw, ImageFont
+import argparse
 
 
 def read_battery_capacity(tag):
@@ -171,9 +172,20 @@ def print_label(img_file, conf: dict):
 
     subprocess.run(bash_command,  shell=True)
 
-    print("")
-    input("Press Enter key to continue next image")
+def process_tag(tag, conf):
+    try:
+        # Read the website tag and create images
+        img_files = create_images(tag, conf)
 
+        if not img_files:
+            return
+
+        # Print the Labels
+        for img in img_files:
+            print_label(img, conf)
+    except Exception as exc:
+        logging.error("Tag " + tag + " could not be printed:")
+        logging.error(exc)
 
 if __name__ == '__main__':
     logging.basicConfig(
@@ -190,22 +202,23 @@ if __name__ == '__main__':
         logging.info(str(conf_elem) + ": " + str(conf[conf_elem]))
     logging.info("current OS: " + os.name)
     # Read Tags
-    with open('tags.txt', 'r') as f:
-        labdoo_tags = f.readlines()
-
-    for curr_tag in labdoo_tags:
-        try:
-
-            # Read the website tag and create images
-            img_files = create_images(curr_tag, conf)
-
-            if not img_files:
-                continue
-
-            # Print the Labels
-            for img in img_files:
-                print_label(img, conf)
-        except Exception as exc:
-            logging.error("tag " + curr_tag + " could not be printed:")
-            logging.error(exc)
+    parser = argparse.ArgumentParser(description='Print Labdoo tags.')
+    parser.add_argument('-i', '--interactive', action='store_true', help='Read tags from command line input')
+    args = parser.parse_args()
+   
+    if args.interactive:
+        while True:
+            try:
+                labdoo_tag = input("Enter Labdoo tag or Ctrl+c to exit: ")
+                process_tag(labdoo_tag, conf)
+            except KeyboardInterrupt:
+                print("Tschau mit Vau!")
+                break
+    else:
+        with open('tags.txt', 'r') as f:
+            labdoo_tags = f.readlines() 
+        for curr_tag in labdoo_tags:
+            process_tag(curr_tag, conf)
+            print("")
+            input("Press Enter key to continue next image from batch file" ) 
     logging.info("print job finished")
