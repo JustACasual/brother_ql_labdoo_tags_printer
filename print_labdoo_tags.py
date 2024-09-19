@@ -210,6 +210,9 @@ if __name__ == '__main__':
         while True:
             try:
                 labdoo_tag = input("Enter Labdoo tag or Ctrl+c to exit: ")
+                # if labdoo_tag is empty, ask again
+                if not labdoo_tag:
+                    continue
                 process_tag(labdoo_tag, conf)
             except KeyboardInterrupt:
                 print("Tschau mit Vau!")
