@@ -1,2 +1,3 @@
 bs4>=0.0.1
 pillow
+brother_ql @ git+https://github.com/JustACasual/brother_ql.git

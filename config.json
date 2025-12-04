@@ -1,6 +1,7 @@
 {
     "brother_ql_cmd" : "brother_ql --debug",
     "printer": "usb://0x04f9:0x2015",
+    "windows_printer_name": "Brother QL-500",
     "model": "QL-500",
     "print_device_tag" : true,
     "print_power_adapter" : false,

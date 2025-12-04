@@ -3,6 +3,7 @@ import logging
 import subprocess
 import os
 
+
 import urllib.request
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
@@ -162,15 +163,19 @@ def print_label(img_file, conf: dict):
 
     model = conf['model']
     printer = conf['printer']
-    brother_ql_cmd= conf['brother_ql_cmd']
     abs_img_path = os.path.abspath(img_file)
-    # working command:
-    # brother_ql -m QL-500 -p usb://0x04f9:0x2015 print -l 29 C:\Users\the_b\labdoo_print\brother_ql_labdoo_tags_printer\img\device_tag.png -r 90
-
-    bash_command = brother_ql_cmd + " -m " + model + " -p " + printer + " print -l 29 " + abs_img_path + " -r 90"
+    
+    # On Windows, use the Windows printer backend instead of USB
+    if os.name == 'nt':
+        # Convert USB identifier to Windows printer name
+        printer_name = conf.get('windows_printer_name', 'Brother QL-500')
+        printer = f'windows://{printer_name}'
+        logging.info(f"Using Windows printer backend: {printer}")
+    
+    # Build command with proper flag ordering and quoting
+    bash_command = f'brother_ql -m {model} -p "{printer}" --debug print -l 29 "{abs_img_path}" -r 90'
     logging.info(bash_command)
-
-    subprocess.run(bash_command,  shell=True)
+    subprocess.run(bash_command, shell=True)
 
 def process_tag(tag, conf):
     try:
